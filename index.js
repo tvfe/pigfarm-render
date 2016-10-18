@@ -7,7 +7,14 @@ var escape = require("./escape");
 var getContentNearError = function (error, templateLines) {
     var near = '';
     try {
-        var line = error.stack.split('\n')[1].split(':')[1] - 1;
+        var stack = error.stack.split('\n');
+        var line;
+        for (let stackitem of stack) {
+            if (stackitem.indexOf('your-template.tpl') != -1) {
+                line = stackitem.split(':')[1] - 1;
+                break;
+            }
+        }
         near = '';
         for (var i = Math.max(0, line - 2); i < Math.min(templateLines.length, line + 3); i++) {
             near += ((i + 1) + (line == i ? ' >' : '  ') + ' | ') + templateLines[i] + '\n';
