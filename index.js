@@ -29,10 +29,15 @@ module.exports = function Renderer(template, helper) {
     // template helper
     var helpers = extend(escape.bind(null), helper);
 
-    var vmTemplate = new vm.Script('(data, _)=>{with(data){return `' + template + '`}}', {
-        filename: 'your-template.tpl'
-    });
-    vmTemplate = vmTemplate.runInThisContext();
+    try {
+        var vmTemplate = new vm.Script('(data, _)=>{with(data){return `' + template + '`}}', {
+            filename: 'your-template.tpl'
+        });
+        vmTemplate = vmTemplate.runInThisContext();
+    } catch(e) {
+        e.wrapper = 'pigfarm-render: template compile error';
+        throw e
+    }
     var vmTemplateLines = template.split('\n');
 
     return function (data) {
