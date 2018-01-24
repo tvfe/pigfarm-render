@@ -1,7 +1,5 @@
 'use strict';
 
-var vm = require("vm");
-var extend = require("extend");
 var escape = require("./escape");
 
 var getContentNearError = function (error, templateLines) {
@@ -26,8 +24,9 @@ var getContentNearError = function (error, templateLines) {
 };
 
 module.exports = function Renderer(template, helper) {
+    var vm = require("vm");
     // template helper
-    var helpers = extend(escape.bind(null), helper);
+    var helpers = Object.assign(escape.bind(null), helper);
 
     try {
         var vmTemplate = new vm.Script('(data, _)=>{with(data){return `' + template + '`}}', {
