@@ -1,13 +1,16 @@
 'use strict';
 
 var escape = require("./escape");
+var vm = require("vm");
+var extend = require('extend')
 
 var getContentNearError = function (error, templateLines) {
     var near = '';
     try {
         var stack = error.stack.split('\n');
         var line;
-        for (let stackitem of stack) {
+        for (var i = 0; i < stack.length; i++) {
+            var stackitem = stack[i];
             if (stackitem.indexOf('your-template.tpl') != -1) {
                 line = stackitem.split(':')[1] - 1;
                 break;
@@ -24,9 +27,8 @@ var getContentNearError = function (error, templateLines) {
 };
 
 module.exports = function Renderer(template, helper) {
-    var vm = require("vm");
     // template helper
-    var helpers = Object.assign(escape.bind(null), helper);
+    var helpers = extend(escape.bind(null), helper);
 
     try {
         var vmTemplate = new vm.Script('(data, _)=>{with(data){return `' + template + '`}}', {
